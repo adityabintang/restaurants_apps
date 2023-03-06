@@ -1,11 +1,9 @@
 // ignore_for_file: unnecessary_this
 
 import 'package:flutter/material.dart';
-import 'package:restaurants_apps/bloc/search/search_api.dart';
 import 'package:restaurants_apps/bloc/search/search_bloc.dart';
 import 'package:restaurants_apps/bloc/search/search_state.dart';
 import 'package:restaurants_apps/data/api/api.dart';
-import 'package:restaurants_apps/data/model/restaurantresults.dart';
 import 'package:restaurants_apps/utils/styles.dart';
 import 'package:restaurants_apps/widget/empty_result_widget.dart';
 import 'package:restaurants_apps/widget/search_error_widget.dart';

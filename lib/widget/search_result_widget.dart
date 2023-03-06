@@ -1,10 +1,9 @@
 // Flutter imports:
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:restaurants_apps/data/model/restaurantresults.dart';
 import 'package:restaurants_apps/data/model/restaurants.dart';
 import 'package:http/http.dart' as http;
+import 'package:restaurants_apps/ui/details_page.dart';
 // Project imports:
 
 class SearchResultWidget extends StatelessWidget {
@@ -17,11 +16,20 @@ class SearchResultWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  ListView.builder(
+    return ListView.builder(
       shrinkWrap: true,
       itemCount: items.length,
       itemBuilder: (context, index) {
-        return _buildRestaurantItem(context, items[index]);
+        return GestureDetector(
+          onTap: (){
+            Navigator.pushNamed(context, DetailsPage.routeName,
+                arguments: items[index]);
+          },
+          child: _buildRestaurantItem(
+            context,
+            items[index],
+          ),
+        );
       },
     );
   }
