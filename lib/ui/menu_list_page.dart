@@ -37,6 +37,10 @@ class _MenuListPageState extends State<MenuListPage> {
     super.dispose();
   }
 
+  Future<void> _onRefresh() async {
+    listRestaurantBloc.add(ListRestaurantRefresh());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,7 +56,11 @@ class _MenuListPageState extends State<MenuListPage> {
           ),
         ],
       ),
-      body: _buildList(context),
+      body: RefreshIndicator(
+        backgroundColor: secondaryColor,
+        onRefresh: _onRefresh,
+        child: _buildList(context),
+      ),
     );
   }
 
@@ -65,7 +73,7 @@ class _MenuListPageState extends State<MenuListPage> {
             title: 'Problem Occured',
             subtitle: state.error ?? 'Something Went Wrong',
             bgColor: Colors.red,
-            onTap: () {},
+            onTap: _onRefresh,
           );
         }
         if (state is ListRestaurantLoaded) {

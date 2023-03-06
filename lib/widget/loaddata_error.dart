@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:restaurants_apps/utils/styles.dart';
+import 'package:restaurants_apps/widget/button_submit.dart';
 
 class LoadDataError extends StatelessWidget {
   final String title;
   final String subtitle;
   final Color bgColor;
-  final Function onTap;
+  final Function()? onTap;
 
   const LoadDataError(
       {Key? key,
@@ -44,16 +46,16 @@ class LoadDataError extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
-            // onTap != null
-            //     ? ButtonSubmitWidget(
-            //         width: Get.width / 2,
-            //         title: "TRY_AGAIN".tr.toUpperCase(),
-            //         bgColor: MyColors.appPrimaryColor,
-            //         textColor: MyColors.white,
-            //         onPressed: onTap,
-            //         loading: false,
-            //       )
-            //     : Container(),
+            onTap != null
+                ? ButtonSubmitWidget(
+                    width: double.infinity,
+                    title: "Coba Lagi",
+                    bgColor: secondaryColor,
+                    textColor: Colors.white,
+                    onPressed: onTap ?? (){},
+                    loading: false, iconData: null,
+                  )
+                : Container(),
           ],
         ),
       ),

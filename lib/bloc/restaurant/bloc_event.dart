@@ -14,3 +14,5 @@ class DetailRestaurantFetch extends ListRestaurantEvent {
 
   const DetailRestaurantFetch({required this.id});
 }
+
+class ListRestaurantRefresh extends ListRestaurantEvent {}

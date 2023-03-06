@@ -6,7 +6,7 @@ import 'package:restaurants_apps/widget/loaddata_error.dart';
 
 class SearchErrorWidget extends StatelessWidget {
   final bool? visible;
-  final Function? onRefresh;
+  final Function()? onRefresh;
 
   const SearchErrorWidget({Key? key, this.visible, this.onRefresh})
       : super(key: key);

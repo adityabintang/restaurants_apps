@@ -53,5 +53,17 @@ class ListRestaurantBloc extends Bloc<ListRestaurantEvent, RestaurantState> {
         yield OnFailure(error: err.toString());
       }
     }
+    if (event is ListRestaurantRefresh) {
+      try{
+        yield OnLoading();
+        final dataList = await api.fetchList();
+        yield ListRestaurantLoaded(
+          dataList: dataList,
+        );
+      }catch(err){
+        print(err);
+        yield OnFailure(error: err.toString());
+      }
+    }
   }
 }
