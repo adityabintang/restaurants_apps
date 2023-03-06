@@ -54,7 +54,11 @@ class ListRestaurantBloc extends Bloc<ListRestaurantEvent, RestaurantState> {
                   dataList: dataList,
                 );
         }
-      } catch (err) {
+      } on SocketException catch(e){
+        print('Error: ${e.message}');
+        yield const OnFailure(error: 'No Internet Connection');
+      }
+      catch (err) {
         print(err);
         yield OnFailure(error: err.toString());
       }
@@ -66,7 +70,11 @@ class ListRestaurantBloc extends Bloc<ListRestaurantEvent, RestaurantState> {
         yield ListRestaurantLoaded(
           dataList: dataList,
         );
-      }catch(err){
+      }on SocketException catch(e){
+        print('Error: ${e.message}');
+        yield const OnFailure(error: 'No Internet Connection');
+      }
+      catch(err){
         print(err);
         yield OnFailure(error: err.toString());
       }
