@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:restaurants_apps/bloc/restaurant/bloc_event.dart';
 import 'package:restaurants_apps/bloc/restaurant/bloc_state.dart';
@@ -27,7 +29,11 @@ class ListRestaurantBloc extends Bloc<ListRestaurantEvent, RestaurantState> {
               ? currentState.copyWith()
               : ListRestaurantLoaded(dataList: dataList);
         }
-      } catch (err) {
+      }on SocketException catch(e){
+        print('Error: ${e.message}');
+        yield const OnFailure(error: 'No Internet Connection');
+      }
+      catch (err) {
         print(err);
         yield OnFailure(error: err.toString());
       }
