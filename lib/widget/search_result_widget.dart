@@ -1,102 +1,27 @@
+// Flutter imports:
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:restaurants_apps/bloc/restaurant/bloc.dart';
-import 'package:restaurants_apps/bloc/restaurant/bloc_event.dart';
-import 'package:restaurants_apps/bloc/restaurant/bloc_state.dart';
-import 'package:restaurants_apps/data/api/api.dart';
+import 'package:restaurants_apps/data/model/restaurantresults.dart';
 import 'package:restaurants_apps/data/model/restaurants.dart';
-import 'package:restaurants_apps/ui/details_page.dart';
 import 'package:http/http.dart' as http;
-import 'package:restaurants_apps/utils/styles.dart';
-import 'package:restaurants_apps/widget/loaddata_error.dart';
-import 'package:restaurants_apps/widget/search_widget.dart';
+// Project imports:
 
-class MenuListPage extends StatefulWidget {
-  static const routeName = '/menu-list';
+class SearchResultWidget extends StatelessWidget {
+  final List<Restaurant> items;
+  final bool? visible;
 
-  const MenuListPage({Key? key}) : super(key: key);
-
-  @override
-  State<MenuListPage> createState() => _MenuListPageState();
-}
-
-class _MenuListPageState extends State<MenuListPage> {
-  final ListRestaurantBloc listRestaurantBloc = ListRestaurantBloc(api: Api());
-
-  @override
-  void initState() {
-    listRestaurantBloc.add(ListRestaurantFetch());
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    listRestaurantBloc.close();
-    super.dispose();
-  }
+  SearchResultWidget({Key? key, required this.items, bool? visible})
+      : this.visible = visible ?? items.isEmpty,
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text('Restaurant App'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              Navigator.pushNamed(context, SearchScreen.routeName);
-            },
-          ),
-        ],
-      ),
-      body: _buildList(context),
-    );
-  }
-
-  Widget _buildList(BuildContext context) {
-    return BlocBuilder(
-      bloc: listRestaurantBloc,
-      builder: (context, state) {
-        if (state is OnFailure) {
-          return LoadDataError(
-            title: 'Problem Occured',
-            subtitle: state.error ?? 'Something Went Wrong',
-            bgColor: Colors.red,
-            onTap: () {},
-          );
-        }
-        if (state is ListRestaurantLoaded) {
-          if (state.dataList.restaurants.isEmpty) {
-            return Center(
-              child: Container(
-                child: const Text('Tidak ada data ditemukan'),
-              ),
-            );
-          }
-          return ListView.builder(
-            itemCount: state.dataList.restaurants.length,
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, DetailsPage.routeName,
-                      arguments: state.dataList.restaurants[index]);
-                },
-                child: _buildRestaurantItem(
-                  context,
-                  state.dataList.restaurants[index],
-                ),
-              );
-            },
-          );
-        }
-        return const Center(
-          child: CircularProgressIndicator(
-            backgroundColor: secondaryColor,
-          ),
-        );
+    return  ListView.builder(
+      shrinkWrap: true,
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        return _buildRestaurantItem(context, items[index]);
       },
     );
   }

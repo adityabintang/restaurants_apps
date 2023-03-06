@@ -1,11 +1,14 @@
-
-
-// ignore_for_file: avoid_unnecessary_containers
-
 import 'package:flutter/material.dart';
-import 'package:restaurants_apps/model/restaurant.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:restaurants_apps/bloc/restaurant/bloc.dart';
+import 'package:restaurants_apps/bloc/restaurant/bloc_event.dart';
+import 'package:restaurants_apps/bloc/restaurant/bloc_state.dart';
+import 'package:restaurants_apps/data/api/api.dart';
+import 'package:restaurants_apps/data/model/restaurants.dart';
+import 'package:restaurants_apps/utils/styles.dart';
+import 'package:restaurants_apps/widget/loaddata_error.dart';
 
-class DetailsPage extends StatelessWidget {
+class DetailsPage extends StatefulWidget {
   static const routeName = '/details-page';
 
   final Restaurant restaurant;
@@ -13,43 +16,89 @@ class DetailsPage extends StatelessWidget {
   const DetailsPage({Key? key, required this.restaurant}) : super(key: key);
 
   @override
+  State<DetailsPage> createState() => _DetailsPageState();
+}
+
+class _DetailsPageState extends State<DetailsPage> {
+  final ListRestaurantBloc detailsRestaurantBloc =
+      ListRestaurantBloc(api: Api());
+
+  @override
+  void initState() {
+    detailsRestaurantBloc.add(DetailRestaurantFetch(id: widget.restaurant.id));
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          restaurant.name.toString(),
+          widget.restaurant.name.toString(),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildImage(),
-            const SizedBox(
-              height: 10,
+      body: BlocBuilder(
+        bloc: detailsRestaurantBloc,
+        builder: (context, state) {
+          if (state is OnFailure) {
+            return LoadDataError(
+              title: 'Problem Occured',
+              subtitle: state.error ?? 'Something Went Wrong',
+              bgColor: Colors.red,
+              onTap: () {},
+            );
+          }
+          if (state is DetailRestaurantLoaded) {
+            if (state.dataList == null) {
+              return Center(
+                child: Container(
+                  child: const Text('Tidak ada data ditemukan'),
+                ),
+              );
+            }
+            return _buildBody(context, restaurant: state.dataList.restaurant);
+          }
+          return const Center(
+            child: CircularProgressIndicator(
+              backgroundColor: secondaryColor,
             ),
-            _buildContent(),
-            _buildDescription(),
-            _buildMenus(context),
-            const SizedBox(
-              height: 25,
-            ),
-          ],
-        ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildBody(BuildContext context, {Restaurant? restaurant}) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildImage(),
+          const SizedBox(
+            height: 10,
+          ),
+          _buildContent(),
+          _buildDescription(),
+          _buildMenus(context, restaurant),
+          const SizedBox(
+            height: 25,
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildImage() {
+    String? imageBaseUrl = 'https://restaurant-api.dicoding.dev/images/medium/';
     return Hero(
-      tag: restaurant.pictureId.toString(),
+      tag: widget.restaurant.pictureId.toString(),
       child: Container(
         margin: const EdgeInsets.only(right: 10, left: 10),
         child: Center(
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Image.network(
-              restaurant.pictureId.toString(),
+              '$imageBaseUrl${widget.restaurant.pictureId}',
             ),
           ),
         ),
@@ -64,7 +113,7 @@ class DetailsPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            restaurant.name.toString(),
+            widget.restaurant.name.toString(),
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
@@ -80,7 +129,7 @@ class DetailsPage extends StatelessWidget {
                   color: Colors.red,
                 ),
                 Text(
-                  restaurant.city.toString(),
+                  widget.restaurant.city.toString(),
                   style: const TextStyle(
                     fontSize: 15,
                   ),
@@ -98,7 +147,7 @@ class DetailsPage extends StatelessWidget {
                   color: Colors.yellow,
                 ),
                 Text(
-                  restaurant.rating.toString(),
+                  widget.restaurant.rating.toString(),
                   style: const TextStyle(
                     fontSize: 15,
                   ),
@@ -126,7 +175,7 @@ class DetailsPage extends StatelessWidget {
           ),
           Container(
             child: Text(
-              restaurant.description,
+              widget.restaurant.description ?? "",
             ),
           ),
         ],
@@ -134,7 +183,7 @@ class DetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildMenus(BuildContext context) {
+  Widget _buildMenus(BuildContext context, Restaurant? restaurant) {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: Column(
@@ -144,7 +193,7 @@ class DetailsPage extends StatelessWidget {
             'Drinks',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
           ),
-          _buildDrinks(context),
+          _buildDrinks(context, restaurant),
           const SizedBox(
             height: 10,
           ),
@@ -152,50 +201,52 @@ class DetailsPage extends StatelessWidget {
             'Foods',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
           ),
-          _buildFoods(context)
+          _buildFoods(context, restaurant)
         ],
       ),
     );
   }
 
-  Widget _buildFoods(BuildContext context){
+  Widget _buildFoods(BuildContext context, Restaurant? restaurant) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: restaurant.menus.foods.map((menus){
-          return Container(
-            padding: const EdgeInsets.fromLTRB(8, 8, 8, 6),
-            margin: const EdgeInsets.only(right: 10, top: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.grey.shade300,
-              shape: BoxShape.rectangle,
-              border: Border.all(color: Colors.grey.shade300, width: 1),
-            ),
-            child: Text(menus),
-          );
-        }).toList(),
+        children: restaurant?.menus?.foods?.map((menus) {
+              return Container(
+                padding: const EdgeInsets.fromLTRB(8, 8, 8, 6),
+                margin: const EdgeInsets.only(right: 10, top: 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: Colors.grey.shade300,
+                  shape: BoxShape.rectangle,
+                  border: Border.all(color: Colors.grey.shade300, width: 1),
+                ),
+                child: Text(menus.name ?? ""),
+              );
+            }).toList() ??
+            [],
       ),
     );
   }
 
-  Widget _buildDrinks(BuildContext context) {
+  Widget _buildDrinks(BuildContext context, Restaurant? restaurant) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: restaurant.menus.drinks.map((menus){
-          return Container(
-            padding: const EdgeInsets.fromLTRB(8, 8, 8, 6),
-            margin: const EdgeInsets.only(right: 10, top: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.grey.shade300,
-              shape: BoxShape.rectangle,
-              border: Border.all(color: Colors.grey.shade300, width: 1),
-            ),
-            child: Text(menus),
-          );
-        }).toList(),
+        children: restaurant?.menus?.drinks?.map((menus) {
+              return Container(
+                padding: const EdgeInsets.fromLTRB(8, 8, 8, 6),
+                margin: const EdgeInsets.only(right: 10, top: 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: Colors.grey.shade300,
+                  shape: BoxShape.rectangle,
+                  border: Border.all(color: Colors.grey.shade300, width: 1),
+                ),
+                child: Text(menus.name ?? ""),
+              );
+            }).toList() ??
+            [],
       ),
     );
   }

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:restaurants_apps/data/model/restaurants.dart';
 import 'package:restaurants_apps/splash_screen.dart';
 import 'package:restaurants_apps/ui/details_page.dart';
 import 'package:restaurants_apps/ui/menu_list_page.dart';
 import 'package:restaurants_apps/utils/fonts.dart';
 import 'package:restaurants_apps/utils/styles.dart';
-
-import 'model/restaurant.dart';
-
+import 'package:restaurants_apps/widget/search_widget.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,8 +29,8 @@ class MyApp extends StatelessWidget {
             ),
         elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
-          primary: secondaryColor,
-          onPrimary: Colors.white,
+          backgroundColor: secondaryColor,
+          foregroundColor: Colors.white,
           textStyle: const TextStyle(),
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(
@@ -49,6 +48,7 @@ class MyApp extends StatelessWidget {
         DetailsPage.routeName: (context) => DetailsPage(
             restaurant:
                 ModalRoute.of(context)?.settings.arguments as Restaurant),
+        SearchScreen.routeName: (context) => SearchScreen()
       },
     );
   }
