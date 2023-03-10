@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:restaurants_apps/bloc/restaurant/bloc_event.dart';
 import 'package:restaurants_apps/bloc/restaurant/bloc_state.dart';
@@ -30,11 +31,11 @@ class ListRestaurantBloc extends Bloc<ListRestaurantEvent, RestaurantState> {
               : ListRestaurantLoaded(dataList: dataList);
         }
       }on SocketException catch(e){
-        print('Error: ${e.message}');
+        debugPrint('Error: ${e.message}');
         yield const OnFailure(error: 'No Internet Connection');
       }
       catch (err) {
-        print(err);
+        debugPrint('$err');
         yield OnFailure(error: err.toString());
       }
     }
@@ -55,11 +56,11 @@ class ListRestaurantBloc extends Bloc<ListRestaurantEvent, RestaurantState> {
                 );
         }
       } on SocketException catch(e){
-        print('Error: ${e.message}');
+        debugPrint('Error: ${e.message}');
         yield const OnFailure(error: 'No Internet Connection');
       }
       catch (err) {
-        print(err);
+        debugPrint('$err');
         yield OnFailure(error: err.toString());
       }
     }
@@ -71,11 +72,27 @@ class ListRestaurantBloc extends Bloc<ListRestaurantEvent, RestaurantState> {
           dataList: dataList,
         );
       }on SocketException catch(e){
-        print('Error: ${e.message}');
+        debugPrint('Error: ${e.message}');
         yield const OnFailure(error: 'No Internet Connection');
       }
       catch(err){
-        print(err);
+        debugPrint('$err');
+        yield OnFailure(error: err.toString());
+      }
+    }
+    if (event is DetailRestaurantRefresh) {
+      try{
+        yield OnLoading();
+        final dataList = await api.fetchDetailsList(event.id ?? "");
+        yield ListRestaurantLoaded(
+          dataList: dataList,
+        );
+      }on SocketException catch(e){
+        debugPrint('Error: ${e.message}');
+        yield const OnFailure(error: 'No Internet Connection');
+      }
+      catch(err){
+        debugPrint('$err');
         yield OnFailure(error: err.toString());
       }
     }

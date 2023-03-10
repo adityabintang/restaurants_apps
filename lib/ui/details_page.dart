@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:restaurants_apps/bloc/restaurant/bloc.dart';
 import 'package:restaurants_apps/bloc/restaurant/bloc_event.dart';
-import 'package:restaurants_apps/bloc/restaurant/bloc_state.dart';
 import 'package:restaurants_apps/data/api/api.dart';
-import 'package:restaurants_apps/data/model/restaurants.dart';
 import 'package:restaurants_apps/utils/styles.dart';
-import 'package:restaurants_apps/widget/loaddata_error.dart';
+import 'package:restaurants_apps/widget/load_data_error.dart';
+
+import '../bloc/restaurant/bloc_state.dart';
+import '../data/model/restaurants.dart';
 
 class DetailsPage extends StatefulWidget {
   static const routeName = '/details-page';
@@ -29,6 +30,11 @@ class _DetailsPageState extends State<DetailsPage> {
     super.initState();
   }
 
+  Future<void> _onRefresh() async {
+    detailsRestaurantBloc
+        .add(DetailRestaurantRefresh(id: widget.restaurant.id));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,15 +51,13 @@ class _DetailsPageState extends State<DetailsPage> {
               title: 'Problem Occured',
               subtitle: state.error ?? 'Something Went Wrong',
               bgColor: Colors.red,
-              onTap: () {},
+              onTap: _onRefresh,
             );
           }
           if (state is DetailRestaurantLoaded) {
             if (state.dataList == null) {
-              return Center(
-                child: Container(
-                  child: const Text('Tidak ada data ditemukan'),
-                ),
+              return const Center(
+                child: Text('Tidak ada data ditemukan'),
               );
             }
             return _buildBody(context, restaurant: state.dataList.restaurant);
@@ -73,7 +77,7 @@ class _DetailsPageState extends State<DetailsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildImage(),
+          _buildImage(context),
           const SizedBox(
             height: 10,
           ),
@@ -88,7 +92,7 @@ class _DetailsPageState extends State<DetailsPage> {
     );
   }
 
-  Widget _buildImage() {
+  Widget _buildImage(BuildContext context) {
     String? imageBaseUrl = 'https://restaurant-api.dicoding.dev/images/medium/';
     return Hero(
       tag: widget.restaurant.pictureId.toString(),
@@ -99,6 +103,15 @@ class _DetailsPageState extends State<DetailsPage> {
             borderRadius: BorderRadius.circular(20),
             child: Image.network(
               '$imageBaseUrl${widget.restaurant.pictureId}',
+              loadingBuilder:
+                  (context, Widget child, ImageChunkEvent? loadingProgress) {
+                if (loadingProgress == null) {
+                  return child;
+                }
+                return const CircularProgressIndicator(
+                  backgroundColor: secondaryColor,
+                );
+              },
             ),
           ),
         ),

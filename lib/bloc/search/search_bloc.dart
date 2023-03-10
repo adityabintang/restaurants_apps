@@ -12,16 +12,16 @@ class SearchBloc {
     final onTextChanged = PublishSubject<String>();
 
     final state = onTextChanged
-        // If the text has not changed, do not perform a new search
+    // If the text has not changed, do not perform a new search
         .distinct()
-        // Wait for the user to stop typing for 250ms before running a search
+    // Wait for the user to stop typing for 250ms before running a search
         .debounceTime(const Duration(milliseconds: 250))
-        // Call the Github api with the given search term and convert it to a
-        // State. If another search term is entered, flatMapLatest will ensure
-        // the previous search is discarded so we don't deliver stale results
-        // to the View.
+    // Call the Github api with the given search term and convert it to a
+    // State. If another search term is entered, flatMapLatest will ensure
+    // the previous search is discarded so we don't deliver stale results
+    // to the View.
         .switchMap<SearchState>((String term) => _search(term, api))
-        // The initial state to deliver to the screen.
+    // The initial state to deliver to the screen.
         .startWith(SearchNoTerm());
 
     return SearchBloc._(onTextChanged, state);

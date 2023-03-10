@@ -1,6 +1,6 @@
 // Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:restaurants_apps/widget/loaddata_error.dart';
+import 'package:restaurants_apps/widget/load_data_error.dart';
 
 // Project imports:
 

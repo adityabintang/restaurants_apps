@@ -5,7 +5,7 @@ import 'package:restaurants_apps/data/model/restaurantresults.dart';
 class Api {
   static const String _baseUrl = 'https://restaurant-api.dicoding.dev/';
 
-  Future<RestaurantResult> fetchList() async {
+  Future<RestaurantResult> fetchList([http.Client? client]) async {
     final response = await http.get(
       Uri.parse("${_baseUrl}list"),
     );

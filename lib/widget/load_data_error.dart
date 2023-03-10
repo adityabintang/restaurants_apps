@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:restaurants_apps/utils/styles.dart';
-import 'package:restaurants_apps/widget/button_submit.dart';
+import 'package:restaurants_apps/widget/button_submit_widget.dart';
 
 class LoadDataError extends StatelessWidget {
   final String title;
@@ -27,9 +27,9 @@ class LoadDataError extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
               child: CircleAvatar(
-                child: Text(':('),
                 foregroundColor: Colors.white,
                 backgroundColor: bgColor,
+                child: const Text(':('),
               ),
             ),
             Padding(
@@ -52,8 +52,9 @@ class LoadDataError extends StatelessWidget {
                     title: "Coba Lagi",
                     bgColor: secondaryColor,
                     textColor: Colors.white,
-                    onPressed: onTap ?? (){},
-                    loading: false, iconData: null,
+                    onPressed: onTap ?? () {},
+                    loading: false,
+                    iconData: null,
                   )
                 : Container(),
           ],

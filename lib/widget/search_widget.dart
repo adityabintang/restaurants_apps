@@ -1,4 +1,3 @@
-// ignore_for_file: unnecessary_this
 
 import 'package:flutter/material.dart';
 import 'package:restaurants_apps/bloc/search/search_bloc.dart';
@@ -56,27 +55,25 @@ class SearchScreenState extends State<SearchScreen> {
       initialData: SearchNoTerm(),
       builder: (BuildContext context, AsyncSnapshot<SearchState> snapshot) {
         final state = snapshot.data;
-        print(snapshot.data);
+        debugPrint('${snapshot.data}');
         return Scaffold(
           // backgroundColor: MyColors.backgroundApp,
           appBar: AppBar(
             elevation: 1,
             backgroundColor: toolBarApp,
             leading: const BackButton(color: black),
-            title: Container(
-              // padding: EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 4.0),
-              child: TextField(
-                controller: _searchQueryController,
-                autofocus: true,
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Search...',
-                ),
-                style: const TextStyle(
-                  decoration: TextDecoration.none,
-                ),
-                onChanged: bloc?.onTextChanged.add,
+            title: TextField(
+              controller: _searchQueryController,
+              autofocus: true,
+              cursorColor: Colors.black,
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Search...',
               ),
+              style: const TextStyle(
+                decoration: TextDecoration.none,
+              ),
+              onChanged: bloc?.onTextChanged.add,
             ),
             actions: <Widget>[
               IconButton(
@@ -115,9 +112,9 @@ class SearchScreenState extends State<SearchScreen> {
 
                         // Fade in the Result if available
                         SearchResultWidget(
-                          items: state is SearchPopulated
-                              ? state.result.restaurants
-                              : []
+                            items: state is SearchPopulated
+                                ? state.result.restaurants
+                                : []
                         ),
                       ],
                     ),
