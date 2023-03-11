@@ -1,11 +1,13 @@
 import 'dart:convert';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:http/testing.dart';
+import 'package:mockito/annotations.dart';
 import 'package:restaurants_apps/data/api/api.dart';
 import 'package:restaurants_apps/data/model/restaurantresults.dart';
 
+@GenerateMocks([http.Client])
 void main() {
   group(
     'Testing Restaurant Api',
@@ -21,7 +23,7 @@ void main() {
           return Response(json.encode(response), 200);
         });
         expect(
-          await Api().fetchList(client),
+          await Api(client).fetchList(),
           isA<RestaurantResult>(),
         );
       });

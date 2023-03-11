@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart';
 import 'package:restaurants_apps/bloc/restaurant/bloc.dart';
 import 'package:restaurants_apps/bloc/restaurant/bloc_event.dart';
 import 'package:restaurants_apps/bloc/restaurant/bloc_state.dart';
@@ -20,7 +21,7 @@ class MenuListPage extends StatefulWidget {
 }
 
 class _MenuListPageState extends State<MenuListPage> {
-  final ListRestaurantBloc listRestaurantBloc = ListRestaurantBloc(api: Api());
+  final ListRestaurantBloc listRestaurantBloc = ListRestaurantBloc(api: Api(Client()));
 
   @override
   void initState() {

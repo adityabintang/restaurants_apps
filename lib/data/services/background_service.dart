@@ -2,6 +2,7 @@ import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart';
 import 'package:restaurants_apps/data/api/api.dart';
 import 'package:restaurants_apps/data/helper/notification_helper.dart';
 import 'package:restaurants_apps/main.dart';
@@ -30,7 +31,7 @@ class BackgroundService {
     debugPrint('Alarm fired!');
 
     final NotificationHelper notificationHelper = NotificationHelper();
-    var result = await Api().fetchList();
+    var result = await Api(Client()).fetchList();
     await notificationHelper.showNotification(
         flutterLocalNotificationsPlugin, result);
 

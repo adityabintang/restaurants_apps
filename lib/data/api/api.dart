@@ -1,18 +1,21 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' show Client;
 import 'package:restaurants_apps/data/model/restaurantresults.dart';
 
 class Api {
   static const String _baseUrl = 'https://restaurant-api.dicoding.dev/';
+  final Client client;
+  Api(this.client);
 
-  Future<RestaurantResult> fetchList([http.Client? client]) async {
-    final response = await http.get(
+  Future<RestaurantResult> fetchList() async {
+    final response = await client.get(
       Uri.parse("${_baseUrl}list"),
     );
 
-    print(response);
+    debugPrint('$response');
     if (response.statusCode == 200) {
-      print(response.body);
+      debugPrint(response.body);
       return RestaurantResult.fromJson(json.decode(response.body));
     } else {
       throw RestaurantResult.fromJson(json.decode(response.body)).message;
@@ -21,13 +24,13 @@ class Api {
   }
 
   Future<RestaurantResult> fetchDetailsList(String id) async {
-    final response = await http.get(
+    final response = await client.get(
       Uri.parse("${_baseUrl}detail/$id"),
     );
 
-    print(response);
+    debugPrint('$response');
     if (response.statusCode == 200) {
-      print(response.body);
+      debugPrint(response.body);
       return RestaurantResult.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to load Detail Restaurant');
@@ -35,13 +38,13 @@ class Api {
   }
 
   Future<RestaurantResult> fetchSearch(String searchQuery) async {
-    final response = await http.get(
+    final response = await client.get(
       Uri.parse("${_baseUrl}search?q=$searchQuery"),
     );
 
-    print(response);
+    debugPrint('$response');
     if (response.statusCode == 200) {
-      print(response.body);
+      debugPrint(response.body);
       return RestaurantResult.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to load Detail Restaurant');
@@ -49,4 +52,4 @@ class Api {
   }
 }
 
-final api = Api();
+final api = Api(Client());

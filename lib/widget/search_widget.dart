@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:restaurants_apps/bloc/search/search_bloc.dart';
 import 'package:restaurants_apps/bloc/search/search_state.dart';
 import 'package:restaurants_apps/data/api/api.dart';
@@ -15,7 +16,7 @@ class SearchScreen extends StatefulWidget {
   final Api api;
 
   SearchScreen({Key? key, Api? api})
-      : this.api = api ?? Api(),
+      : this.api = api ?? Api(Client()),
         super(key: key);
 
   @override
